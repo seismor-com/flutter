@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:unified_analytics/unified_analytics.dart';
 
 import '../artifacts.dart';
+import '../globals.dart' as globals;
 import '../base/common.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
@@ -265,7 +266,10 @@ class AssembleCommand extends FlutterCommand {
     if (fs.path.isRelative(output)) {
       output = fs.path.join(project.directory.path, output);
     }
-    final Artifacts artifacts = _toolContext.artifacts;
+    // Prefer the context-provided artifacts, which carry the local engine
+    // configuration when --local-engine is used; the tool context is created
+    // before the local engine is resolved.
+    final Artifacts artifacts = globals.artifacts ?? _toolContext.artifacts;
 
     List<String> decodedDefines;
     try {
